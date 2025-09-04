@@ -80,6 +80,35 @@ function(packageProject)
         set(PROJECT_VERSION_TWEAK "0")
       endif()
 
+      ## Check if cloned or sources
+      find_package(Git)
+      if(GIT_FOUND)
+          execute_process(
+              COMMAND ${GIT_EXECUTABLE} rev-parse --show-toplevel
+              WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+              RESULT_VARIABLE _git_root_dir_error
+              OUTPUT_VARIABLE _git_root_dir
+              ERROR_QUIET
+              OUTPUT_STRIP_TRAILING_WHITESPACE
+          )
+          message(DEBUG "Git root dir (${_git_root_dir_error}): ${_git_root_dir}")
+          execute_process(
+              COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
+              WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+              OUTPUT_VARIABLE BUILD_COMMIT
+              ERROR_QUIET
+              OUTPUT_STRIP_TRAILING_WHITESPACE
+          )
+          execute_process(
+              COMMAND ${GIT_EXECUTABLE} show -s --format=%ci ${BUILD_COMMIT}
+              WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+              OUTPUT_VARIABLE BUILD_COMMIT_DATETIME
+              ERROR_QUIET
+              OUTPUT_STRIP_TRAILING_WHITESPACE
+          )
+      endif()
+
+
       string(TOUPPER ${PROJECT_NAME} UPPERCASE_PROJECT_NAME)
       # ensure that the generated macro does not include invalid characters
       string(REGEX REPLACE [^a-zA-Z0-9] _ UPPERCASE_PROJECT_NAME ${UPPERCASE_PROJECT_NAME})
