@@ -80,18 +80,11 @@ function(packageProject)
         set(PROJECT_VERSION_TWEAK "0")
       endif()
 
+      string(TIMESTAMP BUILD_DATETIME "%Y-%m-%d %H:%M:%S +0000" UTC)
+
       ## Check if cloned or sources
       find_package(Git)
       if(GIT_FOUND)
-          execute_process(
-              COMMAND ${GIT_EXECUTABLE} rev-parse --show-toplevel
-              WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-              RESULT_VARIABLE _git_root_dir_error
-              OUTPUT_VARIABLE _git_root_dir
-              ERROR_QUIET
-              OUTPUT_STRIP_TRAILING_WHITESPACE
-          )
-          message(DEBUG "Git root dir (${_git_root_dir_error}): ${_git_root_dir}")
           execute_process(
               COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
               WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
